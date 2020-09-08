@@ -19,16 +19,16 @@ class Tokenizer {
 class Lemmatizer {
   lemmaMapping: { [key: string]: string }
   constructor() {
-    this.lemmaMapping = lemmaMapping
+    this.lemmaMapping = lemmaMapping;
 
   }
   lemmatize(tokens: string[]): string[] {
     return tokens.map(token => {
       if (this.lemmaMapping.hasOwnProperty(token)) {
-        return this.lemmaMapping[token]
+        return this.lemmaMapping[token];
       }
       else {
-        return token
+        return token;
       }
     })
   }
@@ -45,24 +45,36 @@ class Fractionator {
     const catagories: number[] = [800, 1600, 3200, 6400, 12800, 25600, 51200, 102400]
     const unGroupedDistillates: [string, string][] = words.map(word => {
       if (this.wordFrequency.hasOwnProperty(word)) {
-        return [word, Math.min(...catagories.filter(c => c > this.wordFrequency[word])).toString()]
+        return [word, Math.min(...catagories.filter(c => c > this.wordFrequency[word])).toString()];
       } else {
-        return [word, "Unknown"]
+        return [word, "Unknown"];
       }
-    })
+    });
     const result: Distillate[] = (catagories.map(c => c.toString()).concat(["Unknown"])).map(
       c => {
-        const r: { category: string, distillate: string[] } = { category: c, distillate: [] }
-        return r
+        const r: { category: string, distillate: string[] } = { category: c, distillate: [] };
+        return r;
       }
-    )
+    );
     unGroupedDistillates.forEach(distillate => {
-      const c = result.find(r => r.category === distillate[1])
+      const c = result.find(r => r.category === distillate[1]);
       if (c !== undefined && !c.distillate.includes(distillate[0])) {
-        c.distillate.push(distillate[0])
+        c.distillate.push(distillate[0]);
+      }
+    });
+    result.forEach(d => {
+      if (d.category !== "Unknown") {
+        const getIndexWithDefault: (word: string) => number = (word) => {
+          if (this.wordFrequency.hasOwnProperty(word)) {
+            return this.wordFrequency[word];
+          } else {
+            return 0;
+          }
+        }
+        d.distillate.sort((a, b) => getIndexWithDefault(b) - getIndexWithDefault(a));
       }
     })
-    return result
+    return result;
   }
 }
 
@@ -74,25 +86,72 @@ interface GeneralAppComponentProps {
 const RequestForInput: React.FunctionComponent<GeneralAppComponentProps> = ({ setStage, setInput }) =>
   <div className="row">
     <div className="col-12 d-flex justify-content-center">
-      <button type="button" className="btn btn-outline-primary" onClick={() => setStage("TextInputReady")}>Paste Text</button>
-      <button type="button" className="btn btn-outline-primary">Choose File</button>
+      <button type="button" className="btn btn-outline-primary" onClick={() => setStage("RequestForText")}>Paste Text</button>
+      <button type="button" className="btn btn-outline-primary" onClick={() => setStage("RequestForFile")}>Choose File</button>
     </div>
   </div>
 
-const TextInputReady: React.FunctionComponent<GeneralAppComponentProps> = ({ setStage, setInput }) =>
+const RequestForText: React.FunctionComponent<GeneralAppComponentProps> = ({ setStage, setInput }) =>
   <React.Fragment>
     <div className="row">
       <div className="col-12">
-        <textarea className="form-control" onChange={e => setInput(e.target.value)} ></textarea>
+        <textarea className="form-control mb-1" onChange={e => setInput(e.target.value)} ></textarea>
       </div>
     </div>
     <div className="row">
       <div className="col-12 d-flex justify-content-center">
-        <button type="button" className="btn btn-outline-primary" onClick={() => setStage("TextInputReady")}>Choose File</button>
+        <button type="button" className="btn btn-outline-primary" onClick={() => { setStage("RequestForFile"); setInput("") }}>Choose File</button>
         <button type="button" className="btn btn-outline-primary" onClick={() => setStage("ResultDisplay")}>Fractionate</button>
       </div>
     </div>
   </React.Fragment>
+
+class RequestForFile extends React.Component<GeneralAppComponentProps, {}> {
+  inputFileRef: React.RefObject<HTMLInputElement>
+  constructor(props: GeneralAppComponentProps) {
+    super(props);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.inputFileRef = React.createRef();
+  }
+
+  handleSubmit(event: React.FormEvent<HTMLFormElement>): void {
+    const input = this.inputFileRef.current;
+    if (input && input.files !== null) {
+      const fileReader = new FileReader();
+      fileReader.onload = () => {
+        const result = fileReader.result;
+        if (typeof result === "string") {
+          this.props.setInput(result)
+        }
+      }
+      fileReader.readAsText(input.files[0]);
+      this.props.setStage("ResultDisplay");
+    }
+    event.preventDefault();
+  }
+
+  render() {
+    return <div className="row">
+      <div className="col-12">
+        <form onSubmit={this.handleSubmit}>
+          <div className="row">
+            <div className="col-12 d-flex justify-content-center">
+              <div className="form-group">
+                <input type="file" className="form-control-file" accept=".txt,.srt" ref={this.inputFileRef} />
+              </div>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-12 d-flex justify-content-center">
+              <button type="button" className="btn btn-outline-primary" onClick={() => { this.props.setStage("RequestForText"); this.props.setInput("") }}>Paste Text</button>
+              <input className="btn btn-outline-primary" type="submit" value="Fractionate" />
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+}
 
 interface ResultDisplayProps {
   setStage: (stage: AppStage) => void;
@@ -102,9 +161,9 @@ interface ResultDisplayProps {
 }
 
 const ResultDisplay: React.FunctionComponent<ResultDisplayProps> = ({ setStage, getInput, setInput }) => {
-  const tokens = new Tokenizer().tokenize(getInput())
-  const lemmas = new Lemmatizer().lemmatize(tokens)
-  const distillates = new Fractionator().fractionate(lemmas)
+  const tokens = new Tokenizer().tokenize(getInput());
+  const lemmas = new Lemmatizer().lemmatize(tokens);
+  const distillates = new Fractionator().fractionate(lemmas);
   const display = distillates.flatMap(
     ({ category, distillate }) => {
       if (distillate.length === 0) {
@@ -125,14 +184,14 @@ const ResultDisplay: React.FunctionComponent<ResultDisplayProps> = ({ setStage, 
     </div>
     <div className="row">
       <div className="col-12 d-flex justify-content-center">
-        <button type="button" className="btn btn-outline-primary" onClick={() => { setStage("TextInputReady"); setInput("") }}>Paste Text</button>
-        <button type="button" className="btn btn-outline-primary">Choose File</button>
+        <button type="button" className="btn btn-outline-primary" onClick={() => { setStage("RequestForText"); setInput("") }}>Paste Text</button>
+        <button type="button" className="btn btn-outline-primary" onClick={() => { setStage("RequestForFile"); setInput("") }}>Choose File</button>
       </div>
     </div>
   </React.Fragment>
 }
 
-type AppStage = "RequestForInput" | "TextInputReady" | "ResultDisplay"
+type AppStage = "RequestForInput" | "RequestForText" | "ResultDisplay" | "RequestForFile"
 
 interface AppState {
   stage: AppStage;
@@ -167,8 +226,9 @@ class App extends React.Component<{}, AppState> {
     return <div className="d-flex align-items-center min-vh-100">
       <div className="container">
         {this.state.stage === "RequestForInput" && <RequestForInput setStage={this.setStage} setInput={this.setInput} />}
-        {this.state.stage === "TextInputReady" && <TextInputReady setStage={this.setStage} setInput={this.setInput} />}
+        {this.state.stage === "RequestForText" && <RequestForText setStage={this.setStage} setInput={this.setInput} />}
         {this.state.stage === "ResultDisplay" && <ResultDisplay setStage={this.setStage} getInput={this.getInput} setInput={this.setInput} />}
+        {this.state.stage === "RequestForFile" && <RequestForFile setStage={this.setStage} setInput={this.setInput} />}
       </div>
     </div>
   }
