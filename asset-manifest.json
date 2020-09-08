@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/fractionator/static/css/main.278954f6.chunk.css",
+    "main.js": "/fractionator/static/js/main.2b10ae78.chunk.js",
+    "main.js.map": "/fractionator/static/js/main.2b10ae78.chunk.js.map",
+    "runtime-main.js": "/fractionator/static/js/runtime-main.309d2ac2.js",
+    "runtime-main.js.map": "/fractionator/static/js/runtime-main.309d2ac2.js.map",
+    "static/css/2.d9ad5f5c.chunk.css": "/fractionator/static/css/2.d9ad5f5c.chunk.css",
+    "static/js/2.a04c7056.chunk.js": "/fractionator/static/js/2.a04c7056.chunk.js",
+    "static/js/2.a04c7056.chunk.js.map": "/fractionator/static/js/2.a04c7056.chunk.js.map",
+    "index.html": "/fractionator/index.html",
+    "precache-manifest.e020f13c5e46a9ac8e5e4d2cd3a96fd1.js": "/fractionator/precache-manifest.e020f13c5e46a9ac8e5e4d2cd3a96fd1.js",
+    "service-worker.js": "/fractionator/service-worker.js",
+    "static/css/2.d9ad5f5c.chunk.css.map": "/fractionator/static/css/2.d9ad5f5c.chunk.css.map",
+    "static/css/main.278954f6.chunk.css.map": "/fractionator/static/css/main.278954f6.chunk.css.map",
+    "static/js/2.a04c7056.chunk.js.LICENSE.txt": "/fractionator/static/js/2.a04c7056.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.309d2ac2.js",
+    "static/css/2.d9ad5f5c.chunk.css",
+    "static/js/2.a04c7056.chunk.js",
+    "static/css/main.278954f6.chunk.css",
+    "static/js/main.2b10ae78.chunk.js"
+  ]
+}
