@@ -78,6 +78,34 @@ class Fractionator {
   }
 }
 
+function i18n(text: string | { [language: string]: string }): string {
+  const translate: { [t: string]: { [l: string]: string } } = {
+    "Paste Text": { "zh-CN": "粘贴文本", "zh-TW": "粘貼文本" },
+    "Choose File": { "zh-CN": "选择文件", "zh-TW": "選擇文件" },
+    "Fractionate": { "zh-CN": "分馏", "zh-TW": "分餾" }
+  };
+  const language = navigator.language;
+  if (typeof text === "string") {
+    if (language !== "en-US") {
+      const multilanguage = translate[text];
+      if (multilanguage.hasOwnProperty(language)) {
+        return multilanguage[language];
+      } else {
+        return text;
+      }
+    }
+    else {
+      return text
+    }
+  } else {
+    if (text.hasOwnProperty(language)) {
+      return text[language];
+    } else {
+      return text["en-US"]
+    }
+  }
+}
+
 interface GeneralAppComponentProps {
   setStage: (stage: AppStage) => void;
   setInput: (input: string) => void
@@ -86,8 +114,8 @@ interface GeneralAppComponentProps {
 const RequestForInput: React.FunctionComponent<GeneralAppComponentProps> = ({ setStage, setInput }) =>
   <div className="row">
     <div className="col-12 d-flex justify-content-center">
-      <button type="button" className="btn btn-outline-primary" onClick={() => setStage("RequestForText")}>Paste Text</button>
-      <button type="button" className="btn btn-outline-primary" onClick={() => setStage("RequestForFile")}>Choose File</button>
+      <button type="button" className="btn btn-outline-primary" onClick={() => setStage("RequestForText")}>{i18n("Paste Text")}</button>
+      <button type="button" className="btn btn-outline-primary" onClick={() => setStage("RequestForFile")}>{i18n("Choose File")}</button>
     </div>
   </div>
 
@@ -100,8 +128,8 @@ const RequestForText: React.FunctionComponent<GeneralAppComponentProps> = ({ set
     </div>
     <div className="row">
       <div className="col-12 d-flex justify-content-center">
-        <button type="button" className="btn btn-outline-primary" onClick={() => { setStage("RequestForFile"); setInput("") }}>Choose File</button>
-        <button type="button" className="btn btn-outline-primary" onClick={() => setStage("ResultDisplay")}>Fractionate</button>
+        <button type="button" className="btn btn-outline-primary" onClick={() => { setStage("RequestForFile"); setInput("") }}>{i18n("Choose File")}</button>
+        <button type="button" className="btn btn-outline-danger" onClick={() => setStage("ResultDisplay")}>{i18n("Fractionate")}</button>
       </div>
     </div>
   </React.Fragment>
@@ -143,8 +171,8 @@ class RequestForFile extends React.Component<GeneralAppComponentProps, {}> {
           </div>
           <div className="row">
             <div className="col-12 d-flex justify-content-center">
-              <button type="button" className="btn btn-outline-primary" onClick={() => { this.props.setStage("RequestForText"); this.props.setInput("") }}>Paste Text</button>
-              <input className="btn btn-outline-primary" type="submit" value="Fractionate" />
+              <button type="button" className="btn btn-outline-primary" onClick={() => { this.props.setStage("RequestForText"); this.props.setInput("") }}>{i18n("Paste Text")}</button>
+              <input className="btn btn-outline-danger" type="submit" value={i18n("Fractionate")} />
             </div>
           </div>
         </form>
@@ -169,10 +197,10 @@ const ResultDisplay: React.FunctionComponent<ResultDisplayProps> = ({ setStage, 
       if (distillate.length === 0) {
         return []
       } else {
-        return <React.Fragment>
-          <div className="separator">{category}</div>
-          <p className="text-center">{distillate.join(" ")}</p>
-        </React.Fragment>
+        return [
+          <p className="text-center" key={`distillate-${category}`}>{distillate.join(" ")}</p>,
+          <div className="separator" key={`separator-${category}`}>{category}</div>
+        ]
       }
     }
   ).reverse()
@@ -184,8 +212,8 @@ const ResultDisplay: React.FunctionComponent<ResultDisplayProps> = ({ setStage, 
     </div>
     <div className="row">
       <div className="col-12 d-flex justify-content-center">
-        <button type="button" className="btn btn-outline-primary" onClick={() => { setStage("RequestForText"); setInput("") }}>Paste Text</button>
-        <button type="button" className="btn btn-outline-primary" onClick={() => { setStage("RequestForFile"); setInput("") }}>Choose File</button>
+        <button type="button" className="btn btn-outline-primary" onClick={() => { setStage("RequestForText"); setInput("") }}>{i18n("Paste Text")}</button>
+        <button type="button" className="btn btn-outline-primary" onClick={() => { setStage("RequestForFile"); setInput("") }}>{i18n("Choose File")}</button>
       </div>
     </div>
   </React.Fragment>
