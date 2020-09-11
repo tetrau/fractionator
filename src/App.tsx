@@ -462,11 +462,11 @@ const ResultDisplay: React.FunctionComponent<{
                 "zh-CN": "双击单词显示中文释义",
                 "zh-TW": "雙擊單詞顯示中文釋義"
               }), "zh-CN",
-              i18n({
-                "en-US": "English-Chinese",
-                "zh-CN": "英汉",
-                "zh-TW": "英漢"
-              }))}
+                i18n({
+                  "en-US": "English-Chinese",
+                  "zh-CN": "英汉",
+                  "zh-TW": "英漢"
+                }))}
             </option>
           </select>
         </div>
@@ -487,7 +487,11 @@ class App extends React.Component<{}, {
     super(props);
     this.dictionaryLibrary = new DictionaryLibrary(
       { "zh-CN": process.env.PUBLIC_URL + "/dictionary.zh-CN.json" },
-      (newDictionaryLibraryStatus) => this.setState({ dictionaryLibraryStatus: newDictionaryLibraryStatus }));
+      (newDictionaryLibraryStatus) => this.setState({ dictionaryLibraryStatus: newDictionaryLibraryStatus })
+    );
+    let dictionaryLanguage = new Internationalization().getLanugage();
+    dictionaryLanguage = dictionaryLanguage === "zh-TW" ? "zh-CN" : dictionaryLanguage
+    this.dictionaryLibrary.downloadDictionary(dictionaryLanguage);
     this.state = {
       stage: "RequestForInput",
       input: "",
