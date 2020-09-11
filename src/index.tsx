@@ -11,7 +11,9 @@ ReactDOM.render(
   document.getElementById('root')
 );
 
-fetch("https://utils.tetrau.io/fractionator_page_view_counter");
+if (process.env.REACT_APP_PAGE_VIEW_COUNT_URL) {
+  fetch(process.env.REACT_APP_PAGE_VIEW_COUNT_URL);
+}
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
