@@ -79,43 +79,60 @@ class Fractionator {
   }
 }
 
-function i18n(text: string | { [language: string]: string }): string {
-  const translate: { [t: string]: { [l: string]: string } } = {
+class Internationalization {
+  constructor() {
+    this.getLanugage = this.getLanugage.bind(this);
+    this.i18n = this.i18n.bind(this);
+  }
+
+  translation: { [t: string]: { [l: string]: string } } = {
     "Paste Text": { "zh-CN": "粘贴文本", "zh-TW": "粘貼文本" },
     "Choose File": { "zh-CN": "选择文件", "zh-TW": "選擇文件" },
     "Fractionate": { "zh-CN": "分馏", "zh-TW": "分餾" },
     "Demo": { "zh-CN": "演示", "zh-TW": "演示" },
     "Paste Text Here": { "zh-CN": "在这里粘贴文本", "zh-TW": "在這裡粘貼文本" },
     "Return": { "zh-CN": "返回", "zh-TW": "返回" }
-  };
-  const languageMapping: { [alias: string]: string } = {
-    "en": "en-US", "zh": "zh-CN",
-    "zh-cn": "zh-CN", "zh-tw": "zh-TW", 
-    "zh-HK": "zh-TW", "zh-hk": "zh-TW"
-  };
-  let language = navigator.language;
-  if (languageMapping.hasOwnProperty(language)) {
-    language = languageMapping[language];
   }
-  if (typeof text === "string") {
-    if (language !== "en-US") {
-      const multilanguage = translate[text];
-      if (multilanguage.hasOwnProperty(language)) {
-        return multilanguage[language];
-      } else {
+
+  getLanugage(): string {
+    const languageMapping: { [alias: string]: string } = {
+      "en": "en-US", "zh": "zh-CN",
+      "zh-cn": "zh-CN", "zh-tw": "zh-TW",
+      "zh-HK": "zh-TW", "zh-hk": "zh-TW"
+    };
+    let language = navigator.language;
+    if (languageMapping.hasOwnProperty(language)) {
+      language = languageMapping[language];
+    }
+    return language;
+  }
+
+  i18n(text: string | { [lang: string]: string }): string {
+    const language = this.getLanugage();
+    if (typeof text === "string") {
+      if (language !== "en-US") {
+        const multilanguage = this.translation[text];
+        if (multilanguage.hasOwnProperty(language)) {
+          return multilanguage[language];
+        } else {
+          return text;
+        }
+      }
+      else {
         return text;
       }
-    }
-    else {
-      return text
-    }
-  } else {
-    if (text.hasOwnProperty(language)) {
-      return text[language];
     } else {
-      return text["en-US"]
+      if (text.hasOwnProperty(language)) {
+        return text[language];
+      } else {
+        return text["en-US"]
+      }
     }
   }
+}
+
+function i18n(text: string | { [lang: string]: string }): string {
+  return new Internationalization().i18n(text);
 }
 
 interface GeneralAppComponentProps {
@@ -171,6 +188,7 @@ const RequestForInput: React.FunctionComponent<GeneralAppComponentProps> = ({ se
       </div>
     </div>
   </React.Fragment>
+
 const RequestForText: React.FunctionComponent<FullAccessAppComponentProps> = ({ setStage, getInput, setInput }) =>
   <React.Fragment>
     <div className="row">
@@ -235,23 +253,182 @@ class RequestForFile extends React.Component<GeneralAppComponentProps, {}> {
   }
 }
 
+class WordDisplay extends React.Component<{ word: string, meaning: string }, { translate: boolean }> {
+  constructor(props: { word: string, meaning: string }) {
+    super(props);
+    this.state = { translate: false };
+    this.handleDoubleClick = this.handleDoubleClick.bind(this);
+  }
 
-const ResultDisplay: React.FunctionComponent<FullAccessAppComponentProps> = ({ setStage, getInput, setInput }) => {
+  handleDoubleClick() {
+    this.setState({ translate: !this.state.translate });
+  }
+
+  render() {
+    if (this.state.translate) {
+      return <p className="mb-1 w-100" onDoubleClick={this.handleDoubleClick}>
+        <strong>{`${this.props.word}`}</strong>
+        {`: ${this.props.meaning}`}
+      </p>
+    } else {
+      return <span onDoubleClick={this.handleDoubleClick} className="mr-1">{`${this.props.word} `}</span>
+    }
+  }
+}
+
+class Dictionary {
+  dictionary: { [word: string]: string }
+
+  constructor(dict: { [word: string]: string }) {
+    this.dictionary = dict;
+    this.define = this.define.bind(this);
+  }
+
+  define(word: string): string {
+    if (this.dictionary.hasOwnProperty(word)) {
+      return this.dictionary[word];
+    } else {
+      return ""
+    }
+  }
+}
+
+interface DictionaryLibraryStatus {
+  selected: string | null;
+  dictionaryStatus: {
+    [lang: string]: "Ready" | "Downloading" | "Error" | "NotDownloaded"
+  }
+}
+
+class DictionaryLibrary {
+  dictionaryLibrary: {
+    [lang: string]: {
+      dictionary: Dictionary | null,
+      status: "Ready" | "Downloading" | "Error" | "NotDownloaded",
+      url: string
+    }
+  }
+  selected: string | null
+  updateDictionaryLibraryStatus: (dls: DictionaryLibraryStatus) => void
+  constructor(dictionaryURLs: { [lang: string]: string }, updateDictionaryLibraryStatusFunc: (dls: DictionaryLibraryStatus) => void) {
+    this.dictionaryLibrary = {};
+    this.selected = null;
+    for (const language in dictionaryURLs) {
+      this.dictionaryLibrary[language] = {
+        dictionary: null,
+        status: "NotDownloaded",
+        url: dictionaryURLs[language]
+      }
+    }
+    this.updateDictionaryLibraryStatus = updateDictionaryLibraryStatusFunc;
+    this.downloadDictionary = this.downloadDictionary.bind(this);
+    this.dictionaryLibraryStatus = this.dictionaryLibraryStatus.bind(this);
+    this.select = this.select.bind(this);
+  }
+
+  dictionaryLibraryStatus(): DictionaryLibraryStatus {
+    const dls: DictionaryLibraryStatus = { selected: this.selected, dictionaryStatus: {} };
+    for (const lang in this.dictionaryLibrary) {
+      dls.dictionaryStatus[lang] = this.dictionaryLibrary[lang].status;
+    }
+    return dls
+  }
+
+  unselect(): void {
+    this.selected = null;
+    this.updateDictionaryLibraryStatus(this.dictionaryLibraryStatus());
+  }
+
+  select(lang: string): void {
+    if (this.dictionaryLibrary.hasOwnProperty(lang)) {
+      this.selected = lang;
+      this.updateDictionaryLibraryStatus(this.dictionaryLibraryStatus());
+      this.downloadDictionary(lang);
+    }
+  }
+
+  getDictionary(): Dictionary | null {
+    if (this.selected !== null) {
+      return this.dictionaryLibrary[this.selected].dictionary;
+    } else {
+      return null;
+    }
+  }
+
+  downloadDictionary(language: string) {
+    if (this.dictionaryLibrary.hasOwnProperty(language) && this.dictionaryLibrary[language].status !== "Ready") {
+      const thisDictionary = this.dictionaryLibrary[language]
+      const url = thisDictionary.url;
+      thisDictionary.status = "Downloading";
+      this.updateDictionaryLibraryStatus(this.dictionaryLibraryStatus());
+      fetch(url)
+        .then(response => response.json())
+        .then(dictionary => {
+          thisDictionary.status = "Ready";
+          thisDictionary.dictionary = new Dictionary(dictionary);
+          this.updateDictionaryLibraryStatus(this.dictionaryLibraryStatus());
+        })
+        .catch(error => {
+          thisDictionary.status = "Error";
+          this.updateDictionaryLibraryStatus(this.dictionaryLibraryStatus());
+        })
+    }
+  }
+}
+
+const ResultDisplay: React.FunctionComponent<{
+  setStage: (stage: AppStage) => void,
+  setInput: (input: string) => void,
+  getInput: () => string,
+  dictionaryLibrary: DictionaryLibrary
+}> = ({ setStage, getInput, setInput, dictionaryLibrary }) => {
   const tokens = new Tokenizer().tokenize(getInput());
   const lemmas = new Lemmatizer().lemmatize(tokens);
   const distillates = new Fractionator().fractionate(lemmas);
+  function displayWords(words: string[]): React.ReactNode[] {
+    if (dictionaryLibrary.selected !== null) {
+      return words.map(word => {
+        let meaning: string = ""
+        const dictionary = dictionaryLibrary.getDictionary()
+        if (dictionary !== null) {
+          meaning = dictionary.define(word);
+        }
+        return <WordDisplay key={word} word={word} meaning={meaning} />;
+      });
+    } else {
+      return [<p className="text-center" key={`distillate-Unknown`}>{words.join(" ")}</p>]
+    }
+  }
+  function DoubleClickDefineOption(text: string, language: string, dictionaryName: string): string {
+    const dictionaryStatus = dictionaryLibrary.dictionaryLibrary[language].status;
+    if (dictionaryStatus === "Ready" || dictionaryStatus === "NotDownloaded") {
+      return text;
+    } else if (dictionaryStatus === "Downloading") {
+      return i18n({
+        "en-US": `Downloading ${dictionaryName} Dictionary...`,
+        "zh-CN": `正在下载${dictionaryName}字典...`,
+        "zh-TW": `正在下載${dictionaryName}字典...`
+      });
+    } else {
+      return i18n({
+        "en-US": "Dictionary Downloading Failed, Please Reload this Page",
+        "zh-CN": "下载字典失败，请刷新页面重试",
+        "zh-TW": "下載字典失敗，請刷新頁面重試"
+      });
+    }
+  }
   const display = distillates.flatMap(
     ({ category, distillate }) => {
       if (distillate.length === 0) {
         return []
       } else {
         return [
-          <p className="text-center" key={`distillate-${category}`}>{distillate.join(" ")}</p>,
+          <div className="d-flex justify-content-center flex-wrap">{displayWords(distillate)}</div>,
           <div className="separator" key={`separator-${category}`}>{category}</div>
-        ]
+        ];
       }
     }
-  ).reverse()
+  ).reverse();
   return <React.Fragment>
     <div className="row">
       <div className="col-12">
@@ -259,28 +436,62 @@ const ResultDisplay: React.FunctionComponent<FullAccessAppComponentProps> = ({ s
       </div>
     </div>
     <div className="row">
-      <div className="col-12 d-flex justify-content-center">
-        <button type="button" className="btn btn-outline-primary" onClick={() => { setStage("RequestForInput"); setInput("") }}>{i18n("Return")}</button>
-        <button type="button" className="btn btn-outline-primary" onClick={() => { setStage("RequestForText"); setInput("") }}>{i18n("Paste Text")}</button>
-        <button type="button" className="btn btn-outline-primary" onClick={() => { setStage("RequestForFile"); setInput("") }}>{i18n("Choose File")}</button>
+      <div className="col-12 d-flex justify-content-center flex-wrap">
+        <button type="button" className="btn btn-outline-primary mt-1 mb-1" onClick={() => { setStage("RequestForInput"); setInput("") }}>{i18n("Return")}</button>
+        <button type="button" className="btn btn-outline-primary mt-1 mb-1" onClick={() => { setStage("RequestForText"); setInput("") }}>{i18n("Paste Text")}</button>
+        <button type="button" className="btn btn-outline-primary mt-1 mb-1" onClick={() => { setStage("RequestForFile"); setInput("") }}>{i18n("Choose File")}</button>
+        <div className="form-group mt-1 mb-1">
+          <select className="form-control w-auto" onChange={(event) => {
+            const value = event.target.value;
+            if (value === "") {
+              dictionaryLibrary.unselect();
+            } else {
+              dictionaryLibrary.select(event.target.value)
+            }
+          }}>
+            <option selected={dictionaryLibrary.selected === null} value="">
+              {i18n({
+                "en-US": "Double Click Word Show Defination: OFF",
+                "zh-CN": "双击单词显示释义：关",
+                "zh-TW": "雙擊單詞顯示釋義：關"
+              })}
+            </option>
+            <option selected={dictionaryLibrary.selected === "zh-CN"} value="zh-CN">
+              {DoubleClickDefineOption(i18n({
+                "en-US": "Double Click Word Show Chinese Defination",
+                "zh-CN": "双击单词显示中文释义",
+                "zh-TW": "雙擊單詞顯示中文釋義"
+              }), "zh-CN",
+              i18n({
+                "en-US": "English-Chinese",
+                "zh-CN": "英汉",
+                "zh-TW": "英漢"
+              }))}
+            </option>
+          </select>
+        </div>
       </div>
     </div>
-  </React.Fragment>
+  </React.Fragment >
 }
 
 type AppStage = "RequestForInput" | "RequestForText" | "ResultDisplay" | "RequestForFile"
 
-interface AppState {
+class App extends React.Component<{}, {
   stage: AppStage;
-  input: string
-}
-
-class App extends React.Component<{}, AppState> {
+  input: string;
+  dictionaryLibraryStatus: DictionaryLibraryStatus
+}> {
+  dictionaryLibrary: DictionaryLibrary
   constructor(props: any) {
     super(props);
+    this.dictionaryLibrary = new DictionaryLibrary(
+      { "zh-CN": process.env.PUBLIC_URL + "/dictionary.zh-CN.json" },
+      (newDictionaryLibraryStatus) => this.setState({ dictionaryLibraryStatus: newDictionaryLibraryStatus }));
     this.state = {
       stage: "RequestForInput",
-      input: ""
+      input: "",
+      dictionaryLibraryStatus: this.dictionaryLibrary.dictionaryLibraryStatus()
     };
     this.setStage = this.setStage.bind(this);
     this.setInput = this.setInput.bind(this);
@@ -304,7 +515,7 @@ class App extends React.Component<{}, AppState> {
       <div className="container">
         {this.state.stage === "RequestForInput" && <RequestForInput setStage={this.setStage} setInput={this.setInput} />}
         {this.state.stage === "RequestForText" && <RequestForText setStage={this.setStage} getInput={this.getInput} setInput={this.setInput} />}
-        {this.state.stage === "ResultDisplay" && <ResultDisplay setStage={this.setStage} getInput={this.getInput} setInput={this.setInput} />}
+        {this.state.stage === "ResultDisplay" && <ResultDisplay dictionaryLibrary={this.dictionaryLibrary} setStage={this.setStage} getInput={this.getInput} setInput={this.setInput} />}
         {this.state.stage === "RequestForFile" && <RequestForFile setStage={this.setStage} setInput={this.setInput} />}
       </div>
     </div>
