@@ -1,27 +1,27 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "d8fef2c269b44afb17cdd7e3b1408875",
+    "revision": "c9142835cf9a91b9c36a609c767e837f",
     "url": "/fractionator/index.html"
   },
   {
-    "revision": "accf1d38cb101a2cc1a3",
+    "revision": "0fe0ab4aba91b98a01fe",
     "url": "/fractionator/static/css/2.d9ad5f5c.chunk.css"
   },
   {
-    "revision": "578c8131a359be4fac4d",
+    "revision": "468bd023cf1e1c17eaeb",
     "url": "/fractionator/static/css/main.278954f6.chunk.css"
   },
   {
-    "revision": "accf1d38cb101a2cc1a3",
-    "url": "/fractionator/static/js/2.60b5ee1d.chunk.js"
+    "revision": "0fe0ab4aba91b98a01fe",
+    "url": "/fractionator/static/js/2.f952dcae.chunk.js"
   },
   {
     "revision": "e88a3e95b5364d46e95b35ae8c0dc27d",
-    "url": "/fractionator/static/js/2.60b5ee1d.chunk.js.LICENSE.txt"
+    "url": "/fractionator/static/js/2.f952dcae.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "578c8131a359be4fac4d",
-    "url": "/fractionator/static/js/main.ba5a625d.chunk.js"
+    "revision": "468bd023cf1e1c17eaeb",
+    "url": "/fractionator/static/js/main.1c97da31.chunk.js"
   },
   {
     "revision": "2fb98eb41dd85e0eba1f",
