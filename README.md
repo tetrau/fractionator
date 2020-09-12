@@ -1,6 +1,14 @@
 # Fractionator
 
-[>> TRY IT <<](https://tetrau.github.io/fractionator)
+<p align="center">
+  <a href="https://tetrau.github.io/fractionator">
+    <img src="https://raw.githubusercontent.com/tetrau/fractionator/master/images/logo.gif" />
+  </a>
+  <br />
+  <a href="https://tetrau.github.io/fractionator">
+    >> TRY IT <<
+  </a>
+</p>
 
 Fractionator is an English learning tool for English language learners. 
 Fractionator can create a word list sorted from least common words to most common 
