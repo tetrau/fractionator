@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="https://tetrau.github.io/fractionator">
-    <img src="https://raw.githubusercontent.com/tetrau/fractionator/master/images/logo.gif" />
+    <img width="33%" src="https://raw.githubusercontent.com/tetrau/fractionator/master/images/logo.gif" />
   </a>
   <br />
   <a href="https://tetrau.github.io/fractionator">
