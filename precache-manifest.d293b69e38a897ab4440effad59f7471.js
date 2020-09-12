@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "b79e4e121aff8698b809f021ee9bf158",
+    "revision": "759bd8b0d322c5c8aebd8d09b68d6fcf",
     "url": "/fractionator/index.html"
   },
   {
@@ -8,7 +8,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/fractionator/static/css/2.d9ad5f5c.chunk.css"
   },
   {
-    "revision": "91bac39dd47a9c3f444d",
+    "revision": "c04756e5a5b83344eadf",
     "url": "/fractionator/static/css/main.278954f6.chunk.css"
   },
   {
@@ -20,8 +20,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/fractionator/static/js/2.f952dcae.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "91bac39dd47a9c3f444d",
-    "url": "/fractionator/static/js/main.2125f0e3.chunk.js"
+    "revision": "c04756e5a5b83344eadf",
+    "url": "/fractionator/static/js/main.b874b8d7.chunk.js"
   },
   {
     "revision": "2fb98eb41dd85e0eba1f",
