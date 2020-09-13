@@ -406,7 +406,9 @@ const ResultDisplay: React.FunctionComponent<{
   const lemmas = new Lemmatizer().lemmatize(tokens);
   const distillates = new Fractionator().fractionate(lemmas);
   function displayWords(words: string[], neverTranslate: boolean): React.ReactNode[] {
-    if (dictionaryLibrary.selected !== null && !neverTranslate) {
+    if (dictionaryLibrary.selected !== null
+        && !neverTranslate
+        && dictionaryLibrary.dictionaryLibrary[dictionaryLibrary.selected].status === "Ready") {
       return words.map(word => {
         let meaning: string = ""
         const dictionary = dictionaryLibrary.getDictionary()
@@ -443,7 +445,9 @@ const ResultDisplay: React.FunctionComponent<{
         return []
       } else {
         return [
-          <div className="d-flex justify-content-center flex-wrap">{displayWords(distillate, category === "Unknown")}</div>,
+          <div className="d-flex justify-content-center flex-wrap" key={`words-${category}`}>
+            {displayWords(distillate, category === "Unknown")}
+          </div>,
           <div className="separator" key={`separator-${category}`}>{category}</div>
         ];
       }
