@@ -1,9 +1,29 @@
 import React from 'react';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css'
-import lemmaMapping from './lemma_mapping.json'
-import wordFrequency from './word_frequency.json'
+import compactLemmaMapping from './compact_lemma_mapping.json'
+import compactWordFrequency from './compact_word_frequency.json'
 import demoText from './a_farewell_to_arms.json'
+
+const lemmaMapping: { [word: string]: string } = Object.fromEntries(
+  compactLemmaMapping.split(";").flatMap(
+    wordFormsLine => {
+      const splitedWordFormsLine = wordFormsLine.split(":");
+      const word = splitedWordFormsLine[0];
+      const forms = splitedWordFormsLine[1].split(",");
+      return forms.map(f => {
+        const compactForm = ["ing", "ed", "s", "es", "er", "est"];
+        if (compactForm.includes(f)) {
+          return [word + f, word];
+        } else {
+          return [f, word];
+        }
+      });
+    }
+  )
+)
+
+const wordFrequency: string[] = compactWordFrequency.split(";");
 
 class Tokenizer {
   tokenize(text: string): string[] {
