@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/fractionator/static/css/main.278954f6.chunk.css",
-    "main.js": "/fractionator/static/js/main.b874b8d7.chunk.js",
-    "main.js.map": "/fractionator/static/js/main.b874b8d7.chunk.js.map",
+    "main.js": "/fractionator/static/js/main.d2ed3c0a.chunk.js",
+    "main.js.map": "/fractionator/static/js/main.d2ed3c0a.chunk.js.map",
     "runtime-main.js": "/fractionator/static/js/runtime-main.309d2ac2.js",
     "runtime-main.js.map": "/fractionator/static/js/runtime-main.309d2ac2.js.map",
     "static/css/2.d9ad5f5c.chunk.css": "/fractionator/static/css/2.d9ad5f5c.chunk.css",
     "static/js/2.f952dcae.chunk.js": "/fractionator/static/js/2.f952dcae.chunk.js",
     "static/js/2.f952dcae.chunk.js.map": "/fractionator/static/js/2.f952dcae.chunk.js.map",
     "index.html": "/fractionator/index.html",
-    "precache-manifest.d293b69e38a897ab4440effad59f7471.js": "/fractionator/precache-manifest.d293b69e38a897ab4440effad59f7471.js",
+    "precache-manifest.c6b581c44cd439af1c4245e7419dddb7.js": "/fractionator/precache-manifest.c6b581c44cd439af1c4245e7419dddb7.js",
     "service-worker.js": "/fractionator/service-worker.js",
     "static/css/2.d9ad5f5c.chunk.css.map": "/fractionator/static/css/2.d9ad5f5c.chunk.css.map",
     "static/css/main.278954f6.chunk.css.map": "/fractionator/static/css/main.278954f6.chunk.css.map",
@@ -20,6 +20,6 @@
     "static/css/2.d9ad5f5c.chunk.css",
     "static/js/2.f952dcae.chunk.js",
     "static/css/main.278954f6.chunk.css",
-    "static/js/main.b874b8d7.chunk.js"
+    "static/js/main.d2ed3c0a.chunk.js"
   ]
 }
