@@ -39,25 +39,55 @@ class PDFExtractor {
     async extractOutline() {
         const pdf = await this.getPdf();
         const outline = await pdf.getOutline();
+        const depth2Outline = outline.flatMap(o1 => {
+            o1.depth = 1
+            return [o1].concat(
+                o1.items.map(o2 => {
+                    o2.title = `${o1.title} / ${o2.title}`;
+                    o2.depth = 2;
+                    return o2
+                })
+            )
+        });
         const simplifiedOutline = await Promise.all(
-            outline.map(async o => ({ title: o.title, pageIndex: await this.getPageIndexFromOutlineItem(o) }))
-        )
-        const length = simplifiedOutline.length;
-        return Promise.all(simplifiedOutline.map(async (o, idx) => {
-            if (idx === length - 1) {
-                return {
-                    title: o.title,
-                    pageIndex: o.pageIndex,
-                    numPages: (await this.numPages()) - o.pageIndex
+            depth2Outline.map(async (o, idx) => ({
+                title: o.title,
+                idx: idx,
+                pageIndex: await this.getPageIndexFromOutlineItem(o),
+                depth: o.depth
+            }))
+        );
+        const calculateChapter = async (outlineInput) => {
+
+            const length = outlineInput.length;
+            return await Promise.all(outlineInput.map(async (o, i) => {
+                if (i === length - 1) {
+                    const numPages = (await this.numPages()) - o.pageIndex;
+                    return {
+                        title: o.title,
+                        pageIndex: o.pageIndex,
+                        numPages: numPages === 0 ? 1 : numPages,
+                        idx: o.idx,
+                        depth: o.depth
+                    }
+                } else {
+                    const numPages = outlineInput[i + 1].pageIndex - o.pageIndex;
+                    return {
+                        title: o.title,
+                        pageIndex: o.pageIndex,
+                        numPages: numPages === 0 ? 1 : numPages,
+                        idx: o.idx,
+                        depth: o.depth
+                    }
                 }
-            } else {
-                return {
-                    title: o.title,
-                    pageIndex: o.pageIndex,
-                    numPages: simplifiedOutline[idx + 1].pageIndex - o.pageIndex
-                }
-            }
-        }))
+            }))
+        }
+        const result = await calculateChapter(simplifiedOutline);
+        const depth1Result = result.filter(o => o.depth === 1);
+        const correcttedDepth1Result = await calculateChapter(depth1Result);
+        const correctResult = result.filter(o => o.depth === 2).concat(correcttedDepth1Result)
+        correctResult.sort((a, b) => a.idx - b.idx);
+        return correctResult;
     }
 
     async extractOnePage(pageIndex) {
