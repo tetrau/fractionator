@@ -1,10 +1,10 @@
-const pdfjsLib = require("pdfjs-dist/es5/build/pdf.js");
+import * as pdfjsLib from "pdfjs-dist/es5/build/pdf.js"
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = process.env.PUBLIC_URL + "/pdf.worker.min.js"
 
-class PDFExtractor {
+export class PDFExtractor {
     constructor(pdf) {
-        this.rawPdf = {data: pdf};
+        this.rawPdf = { data: pdf };
         this.pdf = null;
         this.getPdf = this.getPdf.bind(this);
         this.numPages = this.numPages.bind(this);
@@ -103,4 +103,3 @@ class PDFExtractor {
     }
 }
 
-module.exports = { PDFExtractor: PDFExtractor }
