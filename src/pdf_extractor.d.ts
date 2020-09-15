@@ -1,11 +1,11 @@
-interface Chapter {
+export interface Chapter {
     title: string;
     pageIndex: number;
     numPages: numPages;
 }
 
 export class PDFExtractor {
-    constructor(pdf: string);
+    constructor(pdf: ArrayBuffer);
   
     numPages(): Promise<number>;
   

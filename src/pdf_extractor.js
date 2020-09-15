@@ -4,7 +4,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = process.env.PUBLIC_URL + "/pdf.worker.m
 
 class PDFExtractor {
     constructor(pdf) {
-        this.rawPdf = pdf;
+        this.rawPdf = {data: pdf};
         this.pdf = null;
         this.getPdf = this.getPdf.bind(this);
         this.numPages = this.numPages.bind(this);
@@ -39,6 +39,9 @@ class PDFExtractor {
     async extractOutline() {
         const pdf = await this.getPdf();
         const outline = await pdf.getOutline();
+        if (outline === null) {
+            return [];
+        }
         const depth2Outline = outline.flatMap(o1 => {
             o1.depth = 1
             return [o1].concat(
@@ -89,6 +92,8 @@ class PDFExtractor {
         correctResult.sort((a, b) => a.idx - b.idx);
         return correctResult;
     }
+
+
 
     async extractOnePage(pageIndex) {
         const pdf = await this.getPdf();

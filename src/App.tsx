@@ -4,6 +4,8 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import compactLemmaMapping from './compact_lemma_mapping.json'
 import compactWordFrequency from './compact_word_frequency.json'
 import demoText from './a_farewell_to_arms.json'
+import './file_text_extractor';
+import { PDFFileTextExtractorController, FileTextExtractor, TextFileTextExtractorController } from './file_text_extractor';
 
 const lemmaMapping: { [word: string]: string } = Object.fromEntries(
   compactLemmaMapping.split(";").flatMap(
@@ -225,49 +227,58 @@ const RequestForText: React.FunctionComponent<FullAccessAppComponentProps> = ({ 
     </div>
   </React.Fragment>
 
-class RequestForFile extends React.Component<GeneralAppComponentProps, {}> {
+class RequestForFile extends React.Component<GeneralAppComponentProps, { file: File | null }> {
   inputFileRef: React.RefObject<HTMLInputElement>
+  extractor: null | FileTextExtractor
   constructor(props: GeneralAppComponentProps) {
     super(props);
-    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleFileChoosed = this.handleFileChoosed.bind(this);
+    this.gotoResultDisplay = this.gotoResultDisplay.bind(this);
     this.inputFileRef = React.createRef();
+    this.state = { file: null };
+    this.extractor = null
   }
 
-  handleSubmit(event: React.FormEvent<HTMLFormElement>): void {
+  handleFileChoosed(): void {
     const input = this.inputFileRef.current;
-    if (input && input.files !== null) {
-      const fileReader = new FileReader();
-      fileReader.onload = () => {
-        const result = fileReader.result;
-        if (typeof result === "string") {
-          this.props.setInput(result)
-        }
-      }
-      fileReader.readAsText(input.files[0]);
-      this.props.setStage("ResultDisplay");
+    if (input && input.files !== null && input.files.length > 0) {
+      const file: File = input.files[0];
+      this.setState({ file: file });
     }
-    event.preventDefault();
+  }
+
+  gotoResultDisplay(): void {
+    if (this.extractor !== null) {
+      this.extractor.extract((text) => {
+        if (text !== null) {
+          this.props.setInput(text);
+          this.props.setStage("ResultDisplay");
+        }
+      })
+    }
   }
 
   render() {
     return <div className="row">
       <div className="col-12">
-        <form onSubmit={this.handleSubmit}>
-          <div className="row">
-            <div className="col-12 d-flex justify-content-center">
-              <div className="form-group">
-                <input type="file" className="form-control-file" accept=".txt,.srt" ref={this.inputFileRef} />
-              </div>
+        <div className="row">
+          <div className="col-12 d-flex justify-content-center">
+            <div className="form-group">
+              <input type="file" className="form-control-file" onChange={this.handleFileChoosed} accept=".txt,.srt,.pdf" ref={this.inputFileRef} />
+              {this.state.file !== null && this.state.file.name.toLowerCase().endsWith(".pdf") &&
+                <PDFFileTextExtractorController file={this.state.file} setExtractor={(e) => this.extractor = e} />}
+              {this.state.file !== null && !this.state.file.name.toLowerCase().endsWith(".pdf") &&
+                <TextFileTextExtractorController file={this.state.file} setExtractor={(e) => this.extractor = e} />}
             </div>
           </div>
-          <div className="row">
-            <div className="col-12 d-flex justify-content-center">
-              <button type="button" className="btn btn-outline-primary" onClick={() => { this.props.setStage("RequestForInput"); this.props.setInput("") }}>{i18n("Return")}</button>
-              <button type="button" className="btn btn-outline-primary" onClick={() => { this.props.setStage("RequestForText"); this.props.setInput("") }}>{i18n("Paste Text")}</button>
-              <input className="btn btn-outline-danger" type="submit" value={i18n("Fractionate")} />
-            </div>
+        </div>
+        <div className="row">
+          <div className="col-12 d-flex justify-content-center">
+            <button type="button" className="btn btn-outline-primary" onClick={() => { this.props.setStage("RequestForInput"); this.props.setInput("") }}>{i18n("Return")}</button>
+            <button type="button" className="btn btn-outline-primary" onClick={() => { this.props.setStage("RequestForText"); this.props.setInput("") }}>{i18n("Paste Text")}</button>
+            <button type="button" className="btn btn-outline-danger" onClick={this.gotoResultDisplay}>{i18n("Fractionate")}</button>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   }
@@ -407,8 +418,8 @@ const ResultDisplay: React.FunctionComponent<{
   const distillates = new Fractionator().fractionate(lemmas);
   function displayWords(words: string[], neverTranslate: boolean): React.ReactNode[] {
     if (dictionaryLibrary.selected !== null
-        && !neverTranslate
-        && dictionaryLibrary.dictionaryLibrary[dictionaryLibrary.selected].status === "Ready") {
+      && !neverTranslate
+      && dictionaryLibrary.dictionaryLibrary[dictionaryLibrary.selected].status === "Ready") {
       return words.map(word => {
         let meaning: string = ""
         const dictionary = dictionaryLibrary.getDictionary()
@@ -465,7 +476,7 @@ const ResultDisplay: React.FunctionComponent<{
         <button type="button" className="btn btn-outline-primary mt-1 mb-1" onClick={() => { setStage("RequestForText"); setInput("") }}>{i18n("Paste Text")}</button>
         <button type="button" className="btn btn-outline-primary mt-1 mb-1" onClick={() => { setStage("RequestForFile"); setInput("") }}>{i18n("Choose File")}</button>
         <div className="form-group mt-1 mb-1">
-          <select className="form-control w-auto" onChange={(event) => {
+          <select className="form-control w-auto" value={dictionaryLibrary.selected === null ? "" : dictionaryLibrary.selected} onChange={(event) => {
             const value = event.target.value;
             if (value === "") {
               dictionaryLibrary.unselect();
@@ -473,14 +484,14 @@ const ResultDisplay: React.FunctionComponent<{
               dictionaryLibrary.select(event.target.value)
             }
           }}>
-            <option selected={dictionaryLibrary.selected === null} value="">
+            <option value="">
               {i18n({
                 "en-US": "Double Click Word Show Defination: OFF",
                 "zh-CN": "双击单词显示释义：关",
                 "zh-TW": "雙擊單詞顯示釋義：關"
               })}
             </option>
-            <option selected={dictionaryLibrary.selected === "zh-CN"} value="zh-CN">
+            <option value="zh-CN">
               {DoubleClickDefineOption(i18n({
                 "en-US": "Double Click Word Show Chinese Defination",
                 "zh-CN": "双击单词显示中文释义",
