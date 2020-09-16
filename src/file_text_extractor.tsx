@@ -156,7 +156,7 @@ export class PDFFileTextExtractorController extends React.Component<ExtractorCon
                 <div className="col-2 pl-0 pr-1">
                     <div className="form-group">
                         <label className="mb-1 ml-1 small text-nowrap">
-                                Page From
+                            Page From
                         </label>
                         <input type="number" className="form-control" placeholder="Page From" value={this.state.pageRange[0]}
                             onBlur={this.updateToSafePageRange}
@@ -166,7 +166,7 @@ export class PDFFileTextExtractorController extends React.Component<ExtractorCon
                 <div className="col-2 pl-0 pr-1">
                     <div className="form-group">
                         <label className="mb-1 ml-1 small text-nowrap">
-                                Page To
+                            Page To
                         </label>
                         <input type="number" className="form-control" placeholder="Page To" value={this.state.pageRange[1]}
                             onBlur={this.updateToSafePageRange}
@@ -176,9 +176,14 @@ export class PDFFileTextExtractorController extends React.Component<ExtractorCon
                 <div className="col-8 pl-0 pr-0">
                     <div className="form-group">
                         <label className="mb-1 ml-1 small text-nowrap">
-                                Chapter
+                            Chapter
                         </label>
-                        <select className="form-control" value={this.state.chapterSelectedIdx === null ? -1 : this.state.chapterSelectedIdx} onChange={event => {
+                        <select className="form-control" value={
+                            this.state.chapterSelectedIdx === null ||
+                                this.state.pageRange[0] !== this.state.pdfInfo.outline[this.state.chapterSelectedIdx].pageIndex + 1 ||
+                                this.state.pageRange[1] !== this.state.pdfInfo.outline[this.state.chapterSelectedIdx].pageIndex + this.state.pdfInfo.outline[this.state.chapterSelectedIdx].numPages ?
+                                -1 : this.state.chapterSelectedIdx
+                        } onChange={event => {
                             const value: number = parseInt(event.target.value);
                             if (value === -1) {
                                 this.setState({
