@@ -1,4 +1,5 @@
 import * as pdfjsLib from "pdfjs-dist/es5/build/pdf.js"
+import { isWord } from "./data";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = process.env.PUBLIC_URL + "/pdf.worker.min.js"
 
@@ -93,13 +94,36 @@ export class PDFExtractor {
         return correctResult;
     }
 
-
-
     async extractOnePage(pageIndex) {
+        function concatText(text1, text2) {
+            const words1 = text1.toLowerCase().split(/[^a-zA-Z-']/).filter(w => w.length > 0);
+            const words2 = text2.toLowerCase().split(/[^a-zA-Z-']/).filter(w => w.length > 0);
+            if (words1.length === 0 || words2.length === 0) {
+            } else {
+                const lastWord1 = words1[words1.length - 1];
+                const firstWord2 = words2[0];
+                if (isWord(lastWord1) && isWord(firstWord2)) {
+                } else if (lastWord1.endsWith("-") && isWord(lastWord1.slice(null,-1)) && isWord(firstWord2)) {
+                    return text1.trimEnd().concat(text2.trimStart());
+                }
+                else if (lastWord1.endsWith("-")) {
+                    const word = lastWord1.slice(null, -1).concat(firstWord2);
+                    if (isWord(word) && text1.trimEnd().endsWith("-")) {
+                        return text1.trimEnd().slice(null, -1).concat(text2);
+                    }
+                } else if (!isWord(lastWord1) && !isWord(firstWord2)) {
+                    if (isWord(lastWord1.concat(firstWord2))) {
+                        return text1.trimEnd().concat(text2.trimStart())
+                    }
+                }
+            }
+            return `${text1} ${text2}`
+        }
         const pdf = await this.getPdf();
         const page = await pdf.getPage(pageIndex + 1);
         const pageTextContent = await page.getTextContent();
-        return pageTextContent.items.map(i => i.str).join(" ")
+        pageTextContent.items.map(i => console.log(i.str));
+        return pageTextContent.items.map(i => i.str).reduce(concatText)
     }
 }
 
