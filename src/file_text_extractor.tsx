@@ -1,4 +1,4 @@
-import { PDFExtractor, Chapter } from "./pdf_extractor";
+import { PDFExtractor, Chapter, concatText } from "./pdf_extractor";
 import React from 'react';
 
 export abstract class FileTextExtractor {
@@ -58,10 +58,14 @@ export class PDFFileTextExtractor extends FileTextExtractor {
             if (pdfExtractor === null) {
                 callback(null);
             } else {
-                Promise.all(
-                    Array.from({ length: this.toPage - (this.fromPage - 1) }, (v, k) => k + this.fromPage - 1)
-                        .map(p => pdfExtractor.extractOnePage(p)))
-                    .then(pages => callback(pages.join(" ")))
+                console.log(Array.from({ length: this.toPage - (this.fromPage - 1) }, (v, k) => k + this.fromPage - 1))
+                Array.from({ length: this.toPage - (this.fromPage - 1) }, (v, k) => k + this.fromPage - 1)
+                    .reduce(async (prevPages, pageNumber) => {
+                        const prevPageText: string = await prevPages;
+                        console.log(prevPages);
+                        const thisPageText: string = await pdfExtractor.extractOnePage(pageNumber);
+                        return concatText(prevPageText, thisPageText);
+                    }, Promise.resolve("")).then(t => callback(t))
             }
         })
     }

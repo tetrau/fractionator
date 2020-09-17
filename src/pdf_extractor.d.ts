@@ -14,3 +14,4 @@ export class PDFExtractor {
     extractOnePage(pageIndex): Promise<string>; 
   }
   
+export function concatText(text1: string, text2: string): string;
