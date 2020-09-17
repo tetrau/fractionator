@@ -27,20 +27,15 @@ export class DictionaryLibrary {
     [lang: string]: {
       dictionary: Dictionary | null,
       status: "Ready" | "Downloading" | "Error" | "NotDownloaded",
-      url: string
     }
   }
   selected: string | null
   updateDictionaryLibraryStatus: (dls: DictionaryLibraryStatus) => void
-  constructor(dictionaryURLs: { [lang: string]: string }, updateDictionaryLibraryStatusFunc: (dls: DictionaryLibraryStatus) => void) {
+  constructor(updateDictionaryLibraryStatusFunc: (dls: DictionaryLibraryStatus) => void) {
     this.dictionaryLibrary = {};
     this.selected = null;
-    for (const language in dictionaryURLs) {
-      this.dictionaryLibrary[language] = {
-        dictionary: null,
-        status: "NotDownloaded",
-        url: dictionaryURLs[language]
-      }
+    this.dictionaryLibrary = {
+      "zh-CN": { dictionary: null, status: "NotDownloaded" }
     }
     this.updateDictionaryLibraryStatus = updateDictionaryLibraryStatusFunc;
     this.downloadDictionary = this.downloadDictionary.bind(this);
@@ -80,14 +75,16 @@ export class DictionaryLibrary {
   downloadDictionary(language: string) {
     if (this.dictionaryLibrary.hasOwnProperty(language) && this.dictionaryLibrary[language].status !== "Ready") {
       const thisDictionary = this.dictionaryLibrary[language]
-      const url = thisDictionary.url;
       thisDictionary.status = "Downloading";
       this.updateDictionaryLibraryStatus(this.dictionaryLibraryStatus());
-      fetch(url)
-        .then(response => response.json())
-        .then(dictionary => {
+      let dictionaryModulePromise = null;
+      if (language === "zh-CN") {
+        dictionaryModulePromise = import("./dictionaries/dictionary.zh-CN.json");
+      }
+      dictionaryModulePromise?.then(
+        dictionary => {
           thisDictionary.status = "Ready";
-          thisDictionary.dictionary = new Dictionary(dictionary);
+          thisDictionary.dictionary = new Dictionary(dictionary.default);
           this.updateDictionaryLibraryStatus(this.dictionaryLibraryStatus());
         })
         .catch(error => {

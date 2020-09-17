@@ -401,7 +401,6 @@ class App extends React.Component<{}, {
   constructor(props: any) {
     super(props);
     this.dictionaryLibrary = new DictionaryLibrary(
-      { "zh-CN": process.env.PUBLIC_URL + "/dictionary.zh-CN.json" },
       (newDictionaryLibraryStatus) => this.setState({ dictionaryLibraryStatus: newDictionaryLibraryStatus })
     );
     let dictionaryLanguage = new Internationalization().getLanugage();
