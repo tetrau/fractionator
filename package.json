@@ -20,12 +20,12 @@
     "typescript": "^3.7.5"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "start": "cp node_modules/pdfjs-dist/build/pdf.worker.min.js src/pdf.worker.min.data && react-scripts start",
+    "build": "cp node_modules/pdfjs-dist/build/pdf.worker.min.js src/pdf.worker.min.data && react-scripts build",
+    "test": "cp node_modules/pdfjs-dist/build/pdf.worker.min.js src/pdf.worker.min.data && react-scripts test",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "deploy": "cp node_modules/pdfjs-dist/build/pdf.worker.min.js src/pdf.worker.min.data && gh-pages -d build"
   },
   "eslintConfig": {
     "extends": "react-app"
