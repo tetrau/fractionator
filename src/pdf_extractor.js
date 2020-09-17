@@ -1,7 +1,10 @@
 import * as pdfjsLib from "pdfjs-dist/es5/build/pdf.js"
 import { isWord } from "./data";
+import workerURL from "./pdf.worker.min.data";
 
-pdfjsLib.GlobalWorkerOptions.workerSrc = process.env.PUBLIC_URL + "/pdf.worker.min.js"
+// A workaround to trick create-react-app putting pdf.worker.min.js in /build/static/media
+// so pdf.worker.min.js can be cached by the default service-worker.
+pdfjsLib.GlobalWorkerOptions.workerSrc = workerURL;
 
 export class PDFExtractor {
     constructor(pdf) {
