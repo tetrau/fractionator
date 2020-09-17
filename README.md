@@ -33,8 +33,11 @@ Anything is welcome.
 [OpenSubtitles](https://www.opensubtitles.org/).
 
 ## Acknowledgment
-[`ECDICT`](https://github.com/skywind3000/ECDICT) is used to create [`public/dictionary.zh-CN.json`](/public/dictionary.zh-CN.json). 
-[`ECDICT`](https://github.com/skywind3000/ECDICT) is a project created by [`skywind3000`](https://github.com/skywind3000).
+[`ECDICT`](https://github.com/skywind3000/ECDICT) is used to create 
+[`public/dictionary.zh-CN.json`](/public/dictionary.zh-CN.json) 
+and [`src/compact_lemma_mapping.json`](/src/compact_lemma_mapping.json). 
+[`ECDICT`](https://github.com/skywind3000/ECDICT) is a project created by 
+[`skywind3000`](https://github.com/skywind3000).
 
 # 分馏器·Fractionator 
 
