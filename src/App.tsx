@@ -1,85 +1,12 @@
 import React from 'react';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css'
-import { wordFrequency, lemmaMapping } from './data'
+import { Tokenizer, Lemmatizer, Fractionator } from './fractionator'
 import demoText from './a_farewell_to_arms.json'
 import './file_text_extractor';
 import { PDFFileTextExtractorController, FileTextExtractor, TextFileTextExtractorController } from './file_text_extractor';
 import { DictionaryLibrary, DictionaryLibraryStatus } from "./dictionary";
 
-class Tokenizer {
-  tokenize(text: string): string[] {
-    return text
-      .toLowerCase()
-      .replace(/n't/g, "")
-      .split(/[^a-zA-Z-]/)
-      .map(t => t.trim())
-      .filter(t => t.length > 2)
-      .filter(t => t !== "-")
-  }
-}
-
-class Lemmatizer {
-  lemmaMapping: { [key: string]: string }
-  constructor() {
-    this.lemmaMapping = lemmaMapping;
-
-  }
-  lemmatize(tokens: string[]): string[] {
-    return tokens.map(token => {
-      if (this.lemmaMapping.hasOwnProperty(token)) {
-        return this.lemmaMapping[token];
-      }
-      else {
-        return token;
-      }
-    })
-  }
-}
-
-interface Distillate {
-  category: string;
-  distillate: string[]
-}
-
-class Fractionator {
-  wordFrequency: { [w: string]: number } = Object.fromEntries(wordFrequency.map((word, idx) => [word, idx + 1]))
-  fractionate(words: string[]): Distillate[] {
-    const catagories: number[] = [800, 1600, 3200, 6400, 12800, 25600, 51200, 102400]
-    const unGroupedDistillates: [string, string][] = words.map(word => {
-      if (this.wordFrequency.hasOwnProperty(word)) {
-        return [word, Math.min(...catagories.filter(c => c > this.wordFrequency[word])).toString()];
-      } else {
-        return [word, "Unknown"];
-      }
-    });
-    const result: Distillate[] = (catagories.map(c => c.toString()).concat(["Unknown"])).map(
-      c => {
-        const r: { category: string, distillate: string[] } = { category: c, distillate: [] };
-        return r;
-      }
-    );
-    unGroupedDistillates.forEach(distillate => {
-      const c = result.find(r => r.category === distillate[1]);
-      if (c !== undefined && !c.distillate.includes(distillate[0])) {
-        c.distillate.push(distillate[0]);
-      }
-    });
-    result.forEach(d => {
-      if (d.category !== "Unknown") {
-        const getIndexWithDefault: (word: string) => number = (word) => {
-          if (this.wordFrequency.hasOwnProperty(word)) {
-            return this.wordFrequency[word];
-          } else {
-            return 0;
-          }
-        }
-        d.distillate.sort((a, b) => getIndexWithDefault(b) - getIndexWithDefault(a));
-      }
-    })
-    return result;
-  }
-}
 
 class Internationalization {
   constructor() {
