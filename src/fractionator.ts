@@ -1,4 +1,4 @@
-import { lemmaMapping, wordFrequency } from "./data"
+import { lemmaMapping, wordFrequency, isWord } from "./data"
 
 export class Tokenizer {
     tokenize(text: string): string[] {
@@ -9,6 +9,15 @@ export class Tokenizer {
             .map(t => t.trim())
             .filter(t => t.length > 2)
             .filter(t => t !== "-")
+            .flatMap(token=>{
+                if (isWord(token)) {
+                    return [token];
+                } else if (token.split("-").every(isWord)) {
+                    return token.split("-");
+                } else {
+                    return [token];
+                }
+            })
     }
 }
 
