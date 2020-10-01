@@ -9,7 +9,7 @@ export class Tokenizer {
             .map(t => t.trim())
             .filter(t => t.length > 2)
             .filter(t => t !== "-")
-            .flatMap(token=>{
+            .flatMap(token => {
                 if (isWord(token)) {
                     return [token];
                 } else if (token.split("-").every(isWord)) {
@@ -17,7 +17,21 @@ export class Tokenizer {
                 } else {
                     return [token];
                 }
-            })
+            }).reduce((accu: string[], word: string) => {
+                if (accu.length !== 0) {
+                    const lastWord = accu[accu.length - 1];
+                    const concatWord = lastWord.concat(word);
+                    if (!isWord(lastWord) && !isWord(word) && isWord(concatWord)) {
+                        accu.pop();
+                        accu.push(concatWord);
+                    } else {
+                        accu.push(word);
+                    }
+                } else {
+                    accu.push(word)
+                }
+                return accu;
+            }, [])
     }
 }
 
