@@ -1,5 +1,7 @@
 import { PDFExtractor, Chapter, concatText } from "./pdf_extractor";
 import React from 'react';
+import * as multilaanguage from "./multilanguage";
+import { i18n } from "./internationlization";
 
 export abstract class FileTextExtractor {
     abstract extract(callback: (text: string | null) => void): void
@@ -204,8 +206,8 @@ export class PDFFileTextExtractorController extends React.Component<ExtractorCon
                                 this.updatePageRange(chapter.pageIndex + 1, chapter.pageIndex + 1 + chapter.numPages - 1);
                             }
                         }}>
-                            {this.state.pdfInfo.outline.length === 0 && <option value={-1}>No Table Of Contents</option>}
-                            {this.state.pdfInfo.outline.length > 0 && <option value={-1}>Select Chapter</option>}
+                            {this.state.pdfInfo.outline.length === 0 && <option value={-1}>{i18n(multilaanguage.pdfNoTableOfContent)}</option>}
+                            {this.state.pdfInfo.outline.length > 0 && <option value={-1}>{i18n(multilaanguage.pdfSelectChapter)}</option>}
                             {this.state.pdfInfo.outline.map((chapter, idx) => {
                                 return <option key={idx} value={idx}>{chapter.title}</option>
                             })}

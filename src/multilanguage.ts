@@ -40,8 +40,26 @@ export const dictionaryChineseOn = {
     "zh-TW": "雙擊單詞顯示中文釋義"
 };
 
-export const ChineseDictionaryName = {
-    "en-US": "English-Chinese",
-    "zh-CN": "英汉",
-    "zh-TW": "英漢"
+export const dictionaryDownloadFailed = {
+    "en-US": "Dictionary Downloading Failed, Please Reload this Page",
+    "zh-CN": "下载字典失败，请刷新页面重试",
+    "zh-TW": "下載字典失敗，請刷新頁面重試"
+};
+
+export const downloadingDictionary = {
+    "en-US": `Downloading Dictionary...`,
+    "zh-CN": `正在下载字典...`,
+    "zh-TW": `正在下載字典...`
+};
+
+export const pdfNoTableOfContent = {
+    "en-US": "No Table Of Contents",
+    "zh-CN": "没有章节信息",
+    "zh-TW": "沒有章節信息"
+};
+
+export const pdfSelectChapter = {
+    "en-US": "Select Chapter",
+    "zh-CN": "选择章节",
+    "zh-TW": "選擇章節"
 };
