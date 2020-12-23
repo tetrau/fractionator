@@ -19,9 +19,10 @@ without spoilers and have a not-interrupted-by-dictionary reading or watching
 experiments.
 
 To use Fractionator, click [Paste Text] button, then paste your input text or 
-click [Choose File] button, choose a text file (.txt), or a subtitle file (.srt). 
-Finally, click [Fractionate] button to see the fractionating result. Try It now 
-by clicking the [Demo] button to see the fractionating result of some example text. 
+click [Choose File] button, choose a text file (.txt), a pdf file (.pdf), or a 
+subtitle file (.srt). Finally, click [Fractionate] button to see the fractionating 
+result. Try It now by clicking the [Demo] button to see the fractionating 
+result of some example text. 
 
 Fractionator is free software, all text is processed locally on your browser 
 without been uploaded to any servers.

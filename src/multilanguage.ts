@@ -11,9 +11,9 @@ export const desc = {
 };
 
 export const instruction = {
-    "en-US": "To use Fractionator, click [Paste Text] button, then paste your input text or click [Choose File] button, choose a text file (.txt), or a subtitle file (.srt). Finally, click [Fractionate] button to fractionating result. Try It now by clicking the [Demo] button to fractionate some example text. ",
-    "zh-CN": "点击【粘贴文本】按钮，然后黏贴想要分馏的文本，或者点击【选择文件】按钮，选择一个文本文档（.txt）或字幕文档（.srt）来开始使用分馏器·Fractionator。当输入好文字或选择好文件时，点击【分馏】按钮来查看分馏的结果。点击【演示】按钮用预设的样本文本来试一试分馏器·Fractionator 的效果。",
-    "zh-TW": "點擊【粘貼文本】按鈕，然後黏貼想要分餾的文本，或者點擊【選擇文件】按鈕，選擇一個文本文檔（.txt）或字幕文檔（.srt）來開始使用分餾器·Fractionator。當輸入好文字或選擇好文件時，點擊【分餾】按鈕來查看分餾的結果。點擊【演示】按鈕用預設的樣本文本來試一試分餾器·Fractionator 的效果。"
+    "en-US": "To use Fractionator, click [Paste Text] button, then paste your input text or click [Choose File] button, choose a text file (.txt), pdf file (.pdf), or a subtitle file (.srt). Finally, click [Fractionate] button to fractionating result. Try It now by clicking the [Demo] button to fractionate some example text. ",
+    "zh-CN": "点击【粘贴文本】按钮，然后黏贴想要分馏的文本，或者点击【选择文件】按钮，选择一个文本文档（.txt），pdf 文档（.pdf）或字幕文档（.srt）来开始使用分馏器·Fractionator。当输入好文字或选择好文件时，点击【分馏】按钮来查看分馏的结果。点击【演示】按钮用预设的样本文本来试一试分馏器·Fractionator 的效果。",
+    "zh-TW": "點擊【粘貼文本】按鈕，然後黏貼想要分餾的文本，或者點擊【選擇文件】按鈕，選擇一個文本文檔（.txt），pdf 文檔（.pdf）或字幕文檔（.srt）來開始使用分餾器·Fractionator。當輸入好文字或選擇好文件時，點擊【分餾】按鈕來查看分餾的結果。點擊【演示】按鈕用預設的樣本文本來試一試分餾器·Fractionator 的效果。"
 };
 
 export const privacyStatement = {
