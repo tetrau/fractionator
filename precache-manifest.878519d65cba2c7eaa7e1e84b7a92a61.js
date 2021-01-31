@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "fe4f35fa5c07979a4bc19b5264fac1ee",
+    "revision": "9673802dfa2a9df23f4d63a40f33d649",
     "url": "/fractionator/index.html"
   },
   {
@@ -8,7 +8,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/fractionator/static/css/2.d9ad5f5c.chunk.css"
   },
   {
-    "revision": "f39b03119eced3da70db",
+    "revision": "0a52dc85b49a5d9d30fb",
     "url": "/fractionator/static/css/main.278954f6.chunk.css"
   },
   {
@@ -24,15 +24,11 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/fractionator/static/js/3.a2c6852d.chunk.js"
   },
   {
-    "revision": "f39b03119eced3da70db",
-    "url": "/fractionator/static/js/main.f7f1226d.chunk.js"
+    "revision": "0a52dc85b49a5d9d30fb",
+    "url": "/fractionator/static/js/main.08405075.chunk.js"
   },
   {
     "revision": "8999d470f1befe1097c8",
     "url": "/fractionator/static/js/runtime-main.9f2e434c.js"
-  },
-  {
-    "revision": "5522608642a755b5e1b34ebdcb33810d",
-    "url": "/fractionator/static/media/pdf.worker.min.55226086.data"
   }
 ]);
