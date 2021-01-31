@@ -20,12 +20,13 @@
     "typescript": "^3.7.5"
   },
   "scripts": {
-    "start": "cp node_modules/pdfjs-dist/build/pdf.worker.min.js src/pdf.worker.min.data && react-scripts start",
-    "build": "cp node_modules/pdfjs-dist/build/pdf.worker.min.js src/pdf.worker.min.data && react-scripts build",
-    "test": "cp node_modules/pdfjs-dist/build/pdf.worker.min.js src/pdf.worker.min.data && react-scripts test",
+    "start": "npm run prepare && react-scripts start",
+    "build": "npm run prepare && react-scripts build",
+    "test": "npm run prepare && react-scripts test",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
-    "deploy": "cp node_modules/pdfjs-dist/build/pdf.worker.min.js src/pdf.worker.min.data && gh-pages -d build"
+    "deploy": "npm run prepare && gh-pages -d build",
+    "prepare": "node -e \"const fs = require('fs'); fs.writeFileSync('src/pdf.worker.min.json', JSON.stringify(fs.readFileSync('node_modules/pdfjs-dist/build/pdf.worker.min.js', 'utf-8')))\""
   },
   "eslintConfig": {
     "extends": "react-app"

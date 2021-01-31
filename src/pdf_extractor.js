@@ -1,10 +1,11 @@
 import * as pdfjsLib from "pdfjs-dist/es5/build/pdf.js"
 import { isWord } from "./data";
-import workerURL from "./pdf.worker.min.data";
+import workerContent from "./pdf.worker.min.json";
 
-// A workaround to trick create-react-app putting pdf.worker.min.js in /build/static/media
-// so pdf.worker.min.js can be cached by the default service-worker.
-pdfjsLib.GlobalWorkerOptions.workerSrc = workerURL;
+// Using a blob object url as the workerSrc
+var workerBlob = new Blob([workerContent],{type : 'text/javascript'});
+var workerBlobURL = URL.createObjectURL(workerBlob);
+pdfjsLib.GlobalWorkerOptions.workerSrc = workerBlobURL;
 
 export function concatText(text1, text2) {
     const words1 = text1.toLowerCase().split(/[^a-zA-Z-']/).filter(w => w.length > 0);
