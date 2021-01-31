@@ -60,11 +60,9 @@ export class PDFFileTextExtractor extends FileTextExtractor {
             if (pdfExtractor === null) {
                 callback(null);
             } else {
-                console.log(Array.from({ length: this.toPage - (this.fromPage - 1) }, (v, k) => k + this.fromPage - 1))
                 Array.from({ length: this.toPage - (this.fromPage - 1) }, (v, k) => k + this.fromPage - 1)
                     .reduce(async (prevPages, pageNumber) => {
                         const prevPageText: string = await prevPages;
-                        console.log(prevPages);
                         const thisPageText: string = await pdfExtractor.extractOnePage(pageNumber);
                         return concatText(prevPageText, thisPageText);
                     }, Promise.resolve("")).then(t => callback(t))
@@ -202,7 +200,6 @@ export class PDFFileTextExtractorController extends React.Component<ExtractorCon
                                         chapterSelectedIdx: value,
                                     }
                                 );
-                                console.log(chapter);
                                 this.updatePageRange(chapter.pageIndex + 1, chapter.pageIndex + 1 + chapter.numPages - 1);
                             }
                         }}>

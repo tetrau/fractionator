@@ -130,7 +130,6 @@ export class PDFExtractor {
         const pdf = await this.getPdf();
         const page = await pdf.getPage(pageIndex + 1);
         const pageTextContent = await page.getTextContent();
-        pageTextContent.items.map(i => console.log(i.str));
         return pageTextContent.items.map(i => i.str).reduce(concatText, "")
     }
 }
